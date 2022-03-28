@@ -66,7 +66,7 @@ Now application is up and running on http://localhost:8080/
 
 ### :test_tube: Testing using Swagger UI
 
-####Running application
+#### Running application
 - Run application using `mvn spring-boot: run` or `java -jar /target/recipe-0.0.1-SNAPSHOT.jar`
 - Navigate to http://localhost:8080
 -![image](https://user-images.githubusercontent.com/14979620/160282910-2189eccc-c58b-445f-b7a4-e14de9cdcef7.png)
