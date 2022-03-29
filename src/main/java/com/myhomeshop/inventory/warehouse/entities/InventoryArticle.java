@@ -2,7 +2,6 @@ package com.myhomeshop.inventory.warehouse.entities;
 
 
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import javax.validation.constraints.PositiveOrZero;
@@ -18,7 +17,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"dependantProduct"})
-@Validated
 public class InventoryArticle {
 
     @Id

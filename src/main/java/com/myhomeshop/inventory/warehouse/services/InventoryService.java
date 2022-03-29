@@ -85,7 +85,7 @@ public class InventoryService {
      * inventory article as the product provided as input
      * @param product for which quantity is changing by sell or update
      */
-    public void updatePossibleQuantityForRelatedProduct(@Valid InventoryProduct product) {
+    private void updatePossibleQuantityForRelatedProduct(@Valid InventoryProduct product) {
         Set<InventoryProduct> productsMarkedForStockChange = new HashSet<>();
 
         product.getDependantOn().forEach(productArticleDependency -> productArticleDependency.getArticle().getDependantProduct().forEach(productForUpdate -> productsMarkedForStockChange.add(productForUpdate.getInventoryProduct())));
@@ -96,10 +96,15 @@ public class InventoryService {
      * Updates possible quantity for product based on current article inventory
      * @param productId product to update
      */
-    @Transactional
+
     public void calculateAndUpdatePossibleQuantity(long productId) {
         InventoryProduct productForStockUpdate = inventoryProductRepo.findById(productId).orElseThrow(()->new InventoryException(ErrorCodes.NOT_FOUND,"Cant find product"));
-        long possibleQuantity = productForStockUpdate.getDependantOn().stream().mapToLong(productArticleDependency -> productArticleDependency.getArticle().getStock() / productArticleDependency.getRequiredQuantity()).summaryStatistics().getMin();
+        long possibleQuantity =
+                productForStockUpdate.getDependantOn()
+                        .stream()
+                        .mapToLong(productArticleDependency -> productArticleDependency.getArticle().getStock() / productArticleDependency.getRequiredQuantity())
+                        .summaryStatistics()
+                        .getMin();
         inventoryProductRepo.updatePossibleQuantityByProductId(possibleQuantity, productForStockUpdate.getProductId());
     }
 
