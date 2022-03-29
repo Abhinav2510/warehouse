@@ -26,7 +26,7 @@ The WareHouse API Backend allows performing following operation.
 - Validations for recipe creation and update are assumed as 
   - articleName/productName should be at least 3 to 255 characters
   - article can not have negative available stock
-  - 
+ 
 ## :hammer_and_wrench:	Tech-Stack
 ![Java](https://img.shields.io/badge/-Java-000?&logo=Java&logoColor=007396)
 ![Spring](https://img.shields.io/badge/-Spring-000?&logo=Spring)	
