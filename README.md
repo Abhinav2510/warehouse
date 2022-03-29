@@ -38,6 +38,10 @@ The WareHouse API Backend allows performing following operation.
 - Maven
 - Git bash
 
+## Database diagram
+ ![image](https://user-images.githubusercontent.com/14979620/160713537-cd06c226-83ac-4a8d-bf1e-2bcaf3e886fa.png)
+
+
 ## :memo: Steps to run the application
 - Checkout the code / Download from git repo()
 - checkout : open git bash and run command `git clone https://github.com/Abhinav2510/warehouse.git`
