@@ -74,4 +74,6 @@ Now application is up and running on http://localhost:8080/
 #### Running application
 - Run application using `mvn spring-boot: run`
 - Navigate to http://localhost:8080
--![image](https://user-images.githubusercontent.com/14979620/160282910-2189eccc-c58b-445f-b7a4-e14de9cdcef7.png)
+
+
+![image](https://user-images.githubusercontent.com/14979620/160282910-2189eccc-c58b-445f-b7a4-e14de9cdcef7.png)
