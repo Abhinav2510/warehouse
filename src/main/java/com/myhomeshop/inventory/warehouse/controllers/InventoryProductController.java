@@ -6,6 +6,7 @@ import com.myhomeshop.inventory.warehouse.controllers.errors.ErrorCodes;
 import com.myhomeshop.inventory.warehouse.controllers.errors.InventoryException;
 import com.myhomeshop.inventory.warehouse.services.InventoryService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,7 +27,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(path = "/inventory/product")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InventoryProductController {
 
     private final InventoryService inventoryService;

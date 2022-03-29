@@ -6,7 +6,7 @@ import com.myhomeshop.inventory.warehouse.entities.InventoryArticle;
 import com.myhomeshop.inventory.warehouse.entities.InventoryProduct;
 import com.myhomeshop.inventory.warehouse.repos.InventoryArticleRepo;
 import com.myhomeshop.inventory.warehouse.repos.InventoryProductRepo;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.Set;
  * as well their dependencies with each others.
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 @Validated
 public class InventoryService {
@@ -34,10 +34,10 @@ public class InventoryService {
 
     /**
      * Insert {@link InventoryArticle} into database
-     * @param inventoryArticle
+     * @param inventoryArticle article to insert in database
      */
-    public void insertArticle(@Valid InventoryArticle inventoryArticle) {
-        inventoryItemRepo.save(inventoryArticle);
+    public InventoryArticle insertArticle(@Valid InventoryArticle inventoryArticle) {
+       return inventoryItemRepo.saveAndFlush(inventoryArticle);
     }
 
     /**
@@ -63,17 +63,17 @@ public class InventoryService {
 
     /**
      * Inserts products and its dependencies with articles in database
-     * @param product
+     * @param product product with all dependencies to insert
      */
     @Transactional
     public void insertProductAndDependencies(@Valid InventoryProduct product) {
         InventoryProduct savedInventoryProduct = inventoryProductRepo.saveAndFlush(product);
-        updatePossibleQuantity(savedInventoryProduct);
+        updatePossibleQuantityForRelatedProduct(savedInventoryProduct);
     }
 
     /**
      * find {@link InventoryProduct} by id
-     * @param productId
+     * @param productId productId
      * @return InventoryProduct
      */
     public InventoryProduct findProductById(long productId) {
@@ -85,15 +85,22 @@ public class InventoryService {
      * inventory article as the product provided as input
      * @param product for which quantity is changing by sell or update
      */
-    protected void updatePossibleQuantity(@Valid InventoryProduct product) {
+    public void updatePossibleQuantityForRelatedProduct(@Valid InventoryProduct product) {
         Set<InventoryProduct> productsMarkedForStockChange = new HashSet<>();
 
         product.getDependantOn().forEach(productArticleDependency -> productArticleDependency.getArticle().getDependantProduct().forEach(productForUpdate -> productsMarkedForStockChange.add(productForUpdate.getInventoryProduct())));
+        productsMarkedForStockChange.forEach(productForStockUpdate -> calculateAndUpdatePossibleQuantity(productForStockUpdate.getProductId()));
+    }
 
-        productsMarkedForStockChange.forEach(productForStockUpdate -> {
-            long possibleQuantity = productForStockUpdate.getDependantOn().stream().mapToLong(productArticleDependency -> productArticleDependency.getArticle().getStock() / productArticleDependency.getRequiredQuantity()).summaryStatistics().getMin();
-            inventoryProductRepo.updatePossibleQuantityByProductId(possibleQuantity, productForStockUpdate.getProductId());
-        });
+    /**
+     * Updates possible quantity for product based on current article inventory
+     * @param productId product to update
+     */
+    @Transactional
+    public void calculateAndUpdatePossibleQuantity(long productId) {
+        InventoryProduct productForStockUpdate = inventoryProductRepo.findById(productId).orElseThrow(()->new InventoryException(ErrorCodes.NOT_FOUND,"Cant find product"));
+        long possibleQuantity = productForStockUpdate.getDependantOn().stream().mapToLong(productArticleDependency -> productArticleDependency.getArticle().getStock() / productArticleDependency.getRequiredQuantity()).summaryStatistics().getMin();
+        inventoryProductRepo.updatePossibleQuantityByProductId(possibleQuantity, productForStockUpdate.getProductId());
     }
 
 
@@ -107,7 +114,7 @@ public class InventoryService {
      * @return successful or not
      */
 
-    @Transactional()
+    @Transactional
     public boolean updateProductSales(long productId, long sellingQuantity) {
         InventoryProduct inventoryProduct = inventoryProductRepo.findById(productId).orElseThrow(() -> new InventoryException(ErrorCodes.NOT_FOUND, "Product does not exist"));
 
@@ -122,7 +129,7 @@ public class InventoryService {
         });
         inventoryProduct = inventoryProductRepo.findById(inventoryProduct.getProductId()).orElseThrow(() -> new InventoryException(ErrorCodes.NOT_FOUND, "Product does not exist"));
 
-        updatePossibleQuantity(inventoryProduct);
+        updatePossibleQuantityForRelatedProduct(inventoryProduct);
         return true;
     }
 

@@ -17,12 +17,13 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "dependantProduct")
+@ToString(exclude = {"dependantProduct"})
 @Validated
 public class InventoryArticle {
 
     @Id
     private long articleId;
+
     @Size(min = 3,max = 255,message = "articleName must be between 3 to 255 characters")
     private String articleName;
     @PositiveOrZero

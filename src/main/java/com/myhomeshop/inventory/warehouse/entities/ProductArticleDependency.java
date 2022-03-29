@@ -18,7 +18,7 @@ public class ProductArticleDependency {
     private long productItemDependencyId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "INVENTORY_ARTICLE_ID",nullable = false,updatable = false)
+    @JoinColumn(name = "INVENTORY_ARTICLE_ID")
     private InventoryArticle article;
 
     @ManyToOne(fetch = FetchType.EAGER)

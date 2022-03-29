@@ -103,6 +103,8 @@ public class InventoryServiceTest {
     @Test
     public void test_InsertProductAndDependencies_Test_Quantities() {
         Mockito.when(inventoryProductRepo.saveAndFlush(Mockito.argThat(m -> m.getProductName().equals("Product1")))).thenReturn(inventoryProduct1);
+        Mockito.when(inventoryProductRepo.findById(Mockito.longThat(productId -> productId==1L))).thenReturn(Optional.of(inventoryProduct1));
+        Mockito.when(inventoryProductRepo.findById(Mockito.longThat(productId -> productId==2L))).thenReturn(Optional.of(inventoryProduct2));
 
         inventoryService.insertProductAndDependencies(inventoryProduct1);
 
